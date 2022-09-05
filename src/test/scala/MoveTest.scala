@@ -28,20 +28,20 @@ class MoveTest extends FunSuite{
       assertEquals(rotateAntiClockwise.execute(original), expected)
     }
 
-  moveForwardCheck("forward-1", initialPosition1, Position(Coordinates(0, 1), North))
-  moveForwardCheck("forward-2", initialPosition2, Position(Coordinates(0, 99), South))
-  moveForwardCheck("forward-3", initialPosition3, Position(Coordinates(1, 0), East))
-  moveForwardCheck("forward-4", initialPosition4, Position(Coordinates(99, 0), West))
+  moveForwardCheck("move forward should increment the position by one y value when the rover is facing North", initialPosition1, Position(Coordinates(0, 1), North))
+  moveForwardCheck("move forward should decrement the position by one y value when the rover is facing South", initialPosition2, Position(Coordinates(0, 99), South))
+  moveForwardCheck("move forward should increment the position by one x value when the rover is facing East", initialPosition3, Position(Coordinates(1, 0), East))
+  moveForwardCheck("move forward should decrement the position by one x value when the rover is facing West", initialPosition4, Position(Coordinates(99, 0), West))
 
-  rotateClockwiseCheck("clockwise-1", initialPosition1, Position(Coordinates(0, 0), East))
-  rotateClockwiseCheck("clockwise-2", initialPosition2, Position(Coordinates(0, 0), West))
-  rotateClockwiseCheck("clockwise-3", initialPosition3, Position(Coordinates(0, 0), South))
-  rotateClockwiseCheck("clockwise-4", initialPosition4, Position(Coordinates(0, 0), North))
+  rotateClockwiseCheck("move clockwise should shift the direction to East when the starting direction is North", initialPosition1, Position(Coordinates(0, 0), East))
+  rotateClockwiseCheck("move clockwise should shift the direction to West when the starting direction is South", initialPosition2, Position(Coordinates(0, 0), West))
+  rotateClockwiseCheck("move clockwise should shift the direction to South when the starting direction is East", initialPosition3, Position(Coordinates(0, 0), South))
+  rotateClockwiseCheck("move clockwise should shift the direction to North when the starting direction is West", initialPosition4, Position(Coordinates(0, 0), North))
 
-  rotateAntiClockwiseCheck("anticlockwise-1", initialPosition1, Position(Coordinates(0, 0), West))
-  rotateAntiClockwiseCheck("anticlockwise-2", initialPosition2, Position(Coordinates(0, 0), East))
-  rotateAntiClockwiseCheck("anticlockwise-3", initialPosition3, Position(Coordinates(0, 0), North))
-  rotateAntiClockwiseCheck("anticlockwise-4", initialPosition4, Position(Coordinates(0, 0), South))
+  rotateAntiClockwiseCheck("move anticlockwise should shift the direction to West when the starting direction is North", initialPosition1, Position(Coordinates(0, 0), West))
+  rotateAntiClockwiseCheck("move anticlockwise should shift the direction to East when the starting direction is South", initialPosition2, Position(Coordinates(0, 0), East))
+  rotateAntiClockwiseCheck("move anticlockwise should shift the direction to North when the starting direction is East", initialPosition3, Position(Coordinates(0, 0), North))
+  rotateAntiClockwiseCheck("move anticlockwise should shift the direction to South when the starting direction is West", initialPosition4, Position(Coordinates(0, 0), South))
 
 
 }
