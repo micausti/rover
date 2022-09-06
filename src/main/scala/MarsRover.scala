@@ -7,9 +7,10 @@ object MarsRover extends IOApp.Simple {
   val startingPosition = Position(Coordinates(0, 0), North)
   def run: IO[Unit] =
     for {
-      _ <- IO.println("Hello World")
+      _ <- IO.println("Calculating moves to destination")
       moves = PathFinder.path(grid, destination, startingPosition)
-      _ = Printer.createPrintOutput(moves)
+      output = Printer.createPrintOutput(moves)
+      _ = println(output)
     } yield ()
 
 }
