@@ -10,15 +10,10 @@ object Position {
       case h if currentValue > gridMax                           => currentValue - gridMax
     }
 
-  def distanceToDestination(starting: Position, ending: Position): Int = {
-    val side1 = ending.coordinates.x - starting.coordinates.x
-    val side2 = ending.coordinates.y - starting.coordinates.y
+  def distanceToDestination(starting: Position, ending: Coordinates): Int = {
+    val side1 = ending.x - starting.coordinates.x
+    val side2 = ending.y - starting.coordinates.y
 
     hypot(side1.toDouble, side2.toDouble).toInt
   }
-
-  //if it's a straight shot
-  //if you need to zig zag
-  //figure out which direction the destination is in from current position
-  //if
 }

@@ -1,8 +1,7 @@
-import cats.effect.IO
 
 object Printer {
-  def print(moves: List[Move]): IO[Unit]= {
-    IO(moves.foreach(println))
+  def createPrintOutput(moves: List[Move]): String = {
+    moves.map(m => m.toString.dropRight(2)).mkString(" ")
   }
 
 }

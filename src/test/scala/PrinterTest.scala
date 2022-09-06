@@ -1,18 +1,16 @@
-import cats.effect.IO
-import munit.CatsEffectSuite
+import munit.FunSuite
 
-class PrinterTest extends CatsEffectSuite {
+class PrinterTest extends FunSuite {
 
-  val grid                   = Grid(100, 100)
-  val instructionsToDestination: IO[Unit] = Printer.print(List(Forward(), Clockwise(), Forward(), Anticlockwise(), Forward(), Forward(), Forward(), Forward()))
-  val expectedResult: Unit = println("Forward", "Clockwise", "Forward", "Anticlockwise")
+  val instructionsToDestination: String = Printer.createPrintOutput(List(Forward(), Clockwise(), Forward(), Anticlockwise(), Forward(), Forward(), Forward(), Forward()))
+  val expectedResult: String = "Forward Clockwise Forward Anticlockwise Forward Forward Forward Forward"
 
 
-  def printerCheck(name: String, instructions: IO[Unit], expected: Unit)(implicit loc: munit.Location): Unit =
+  def printerCheck(name: String, instructions: String, expected: String)(implicit loc: munit.Location): Unit =
     test(name) {
-      assertIO(instructions, expectedResult)
+      assertEquals(instructions, expected)
     }
 
-  printerCheck("someName", instructionsToDestination, expectedResult)
+  printerCheck("createPrintOutput should take a list of moves and convert it to a string", instructionsToDestination, expectedResult)
 
 }
