@@ -1,10 +1,18 @@
-import scala.math.hypot
+import MarsRover.grid
 
 sealed trait Move {
   def execute(currentPosition: Position): Position
 }
 
-case class Forward(grid: Grid) extends Move {
+object Move {
+  def gridCheck(cd: Coordinates, grid:Grid): Coordinates = {
+    val x = Position.keepOnGrid(cd.x, grid.len)
+    val y = Position.keepOnGrid(cd.y, grid.height)
+    Coordinates(x, y)
+  }
+}
+
+case class Forward() extends Move {
   override def execute(currentPosition: Position): Position = {
     val newCoordinates = currentPosition.direction match {
       case North => Coordinates(currentPosition.coordinates.x, currentPosition.coordinates.y + 1)
@@ -12,18 +20,14 @@ case class Forward(grid: Grid) extends Move {
       case South => Coordinates(currentPosition.coordinates.x, currentPosition.coordinates.y - 1)
       case West => Coordinates(currentPosition.coordinates.x - 1, currentPosition.coordinates.y)
     }
-    val gridCheckedCoordinates = gridCheck(newCoordinates)
+    val gridCheckedCoordinates = Move.gridCheck(newCoordinates, grid)
     Position(Coordinates(gridCheckedCoordinates.x, gridCheckedCoordinates.y), currentPosition.direction)
   }
 
-  def gridCheck(cd: Coordinates): Coordinates = {
-    val x = Position.keepOnGrid(cd.x, grid.len)
-    val y = Position.keepOnGrid(cd.y, grid.height)
-    Coordinates(x, y)
-  }
+
 }
 
-case class Clockwise(grid: Grid) extends Move {
+case class Clockwise() extends Move {
   override def execute(currentPosition: Position): Position = {
     val newDirection = currentPosition.direction match {
       case North => East
@@ -35,7 +39,7 @@ case class Clockwise(grid: Grid) extends Move {
   }
 }
 
-case class Anticlockwise(grid: Grid) extends Move {
+case class Anticlockwise() extends Move {
   override def execute(currentPosition: Position): Position = {
     val newDirection = currentPosition.direction match {
       case North => West

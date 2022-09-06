@@ -1,6 +1,6 @@
-import munit.FunSuite
+import munit.CatsEffectSuite
 
-class MarsRoverTest extends FunSuite {
+class MarsRoverTest extends CatsEffectSuite {
 
 }
 

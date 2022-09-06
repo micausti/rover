@@ -16,4 +16,9 @@ object Position {
 
     hypot(side1.toDouble, side2.toDouble).toInt
   }
+
+  //if it's a straight shot
+  //if you need to zig zag
+  //figure out which direction the destination is in from current position
+  //if
 }

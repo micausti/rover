@@ -9,9 +9,9 @@ class MoveTest extends FunSuite{
   val initialPosition3: Position = Position(Coordinates(0, 0), East)
   val initialPosition4: Position = Position(Coordinates(0, 0), West)
 
-  val moveForward: Forward = Forward(grid)
-  val rotateClockwise: Clockwise = Clockwise(grid)
-  val rotateAntiClockwise: Anticlockwise = Anticlockwise(grid)
+  val moveForward: Forward = Forward()
+  val rotateClockwise: Clockwise = Clockwise()
+  val rotateAntiClockwise: Anticlockwise = Anticlockwise()
 
   def moveForwardCheck(name: String, original: Position, expected: Position)(implicit loc: munit.Location): Unit =
     test(name) {
