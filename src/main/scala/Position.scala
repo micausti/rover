@@ -1,5 +1,3 @@
-import scala.math.hypot
-
 case class Position(coordinates: Coordinates, direction: Direction)
 
 object Position {

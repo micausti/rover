@@ -1,8 +1,6 @@
 import munit.FunSuite
 
 class PositionTest extends FunSuite {
-
-
   def keepOnGridCheck(name: String, currentValue: Int, gridMax: Int, expected: Int)(implicit loc: munit.Location): Unit =
     test(name) {
       assertEquals(Position.keepOnGrid(currentValue, gridMax), expected)
