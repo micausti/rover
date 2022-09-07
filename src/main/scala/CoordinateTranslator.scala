@@ -1,23 +1,23 @@
 import scala.annotation.tailrec
 
-case class RunningListOfMoves(direction: Direction, moves: Option[List[Move]])
+case class RunningListOfMoves(direction: Direction, moves: List[Move])
 
 class CoordinateTranslator {
 
-  def turnToFaceNorth(currentDirection: Direction): Option[List[Move]] =
+  private def turnToFaceNorth(currentDirection: Direction): List[Move] =
     currentDirection match {
-      case North => Some(List.empty)
-      case East  => Some(List(Anticlockwise()))
-      case South => Some(List(Anticlockwise(), Anticlockwise()))
-      case West  => Some(List(Clockwise()))
+      case North => List.empty
+      case East  => List(Anticlockwise())
+      case South => List(Anticlockwise(), Anticlockwise())
+      case West  => List(Clockwise())
     }
 
-  def turnToFaceEast(currentDirection: Direction): Option[List[Move]] =
+  private def turnToFaceEast(currentDirection: Direction): List[Move] =
     currentDirection match {
-      case North => Some(List(Clockwise()))
-      case East  => Some(List.empty)
-      case South => Some(List(Anticlockwise()))
-      case West  => Some(List(Clockwise(), Clockwise()))
+      case North => List(Clockwise())
+      case East  => List.empty
+      case South => List(Anticlockwise())
+      case West  => List(Clockwise(), Clockwise())
     }
 
   @tailrec
@@ -25,25 +25,23 @@ class CoordinateTranslator {
     coordinates match {
       case Nil      => moves
       case x :: Nil => moves
-      case x :: xs  => coordinatesToMoves(xs, compare(moves.direction, x, xs.head))
+      case x :: xs  => coordinatesToMoves(xs, compare(x, xs.head, moves))
     }
 
-  def compare(currentDirection: Direction, initial: Coordinates, destination: Coordinates): RunningListOfMoves = {
+  def compare(initial: Coordinates, destination: Coordinates, runningListOfMoves: RunningListOfMoves): RunningListOfMoves = {
     val xMatch = initial.x == destination.x
     val yMatch = initial.y == destination.y
     initial match {
-      case arrived if xMatch && yMatch => RunningListOfMoves(North, Some(List.empty))
+      case arrived if xMatch && yMatch => RunningListOfMoves(North, List.empty)
       case moveUpAndOver if !xMatch && !yMatch =>
-        RunningListOfMoves(North, combineLists(turnToFaceNorth(currentDirection), Some(List(Forward(), Clockwise(), Forward()))))
+        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward(), Clockwise(), Forward()))
       case moveUp if xMatch && !yMatch =>
-        RunningListOfMoves(North, combineLists(turnToFaceNorth(currentDirection), Some(List(Forward()))))
+        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward()))
       case moveOver if !xMatch && yMatch =>
-        RunningListOfMoves(East, combineLists(turnToFaceEast(currentDirection), Some(List(Forward()))))
-      case _ => RunningListOfMoves(North, Some(List.empty))
+        RunningListOfMoves(East, runningListOfMoves.moves ++ turnToFaceEast(runningListOfMoves.direction) ++ List(Forward()))
+      case _ => RunningListOfMoves(North, List.empty)
 
     }
   }
 
-  def combineLists(first: Option[List[Move]], second: Option[List[Move]]): Option[List[Move]] =
-    Option((first ++ second).flatten.toList).filter(_.nonEmpty)
 }
