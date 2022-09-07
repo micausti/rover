@@ -1,13 +1,26 @@
 import munit.FunSuite
 
-class CoordinateTranslatorTest extends FunSuite{
+class CoordinateTranslatorTest extends FunSuite {
 
-  val translator = new CoordinateTranslator
-  val coordinatesToDestination = List(Coordinates(0, 0))
-  val coordinatesToDestination2 = List(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2), Coordinates(2, 3), Coordinates(3, 3))
-  val initialRunningListOfMoves = RunningListOfMoves(North, Some(List.empty))
-  val expectedRunningListOfMoves = RunningListOfMoves(North, Some(List(Forward(), Clockwise(), Forward(), Anticlockwise(), Forward(), Clockwise())))
+  val translator                  = new CoordinateTranslator
+  val initial: RunningListOfMoves = RunningListOfMoves(North, List.empty)
 
-  assertEquals(translator.coordinatesToMoves(coordinatesToDestination, initialRunningListOfMoves), expectedRunningListOfMoves)
+  def coordinateTranslatorTest(name: String, original: List[Coordinates], expected: List[Move])(implicit loc: munit.Location): Unit =
+    test(name) {
+      assertEquals(translator.coordinatesToMoves(original, initial).moves, expected)
+    }
+
+  coordinateTranslatorTest("Already at destination", List(Coordinates(0, 0)), List.empty)
+  coordinateTranslatorTest(
+    "Over and Up",
+    List(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1)),
+    List(Clockwise(), Forward(), Anticlockwise(), Forward())
+  )
+  coordinateTranslatorTest("Up and Over", List(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1)), List(Forward(), Clockwise(), Forward()))
+  coordinateTranslatorTest(
+    "A longer set of moves",
+    List(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(3, 1), Coordinates(4, 1)),
+    List(Clockwise(), Forward(), Anticlockwise(), Forward(), Clockwise(), Forward(), Forward(), Forward())
+  )
 
 }

@@ -1,7 +1,7 @@
 import munit.FunSuite
 
 class PrinterTest extends FunSuite {
-  val moves = Some(List(Forward(), Clockwise(), Forward(), Anticlockwise(), Forward(), Forward(), Forward(), Forward()))
+  val moves = List(Forward(), Clockwise(), Forward(), Anticlockwise(), Forward(), Forward(), Forward(), Forward())
   val instructionsToDestination: String =
     Printer.createPrintOutput(RunningListOfMoves(North, moves))
   val expectedResult: String = "Forward Clockwise Forward Anticlockwise Forward Forward Forward Forward"
