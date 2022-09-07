@@ -7,17 +7,17 @@ class CoordinateTranslator {
   private def turnToFaceNorth(currentDirection: Direction): List[Move] =
     currentDirection match {
       case North => List.empty
-      case East  => List(Anticlockwise())
-      case South => List(Anticlockwise(), Anticlockwise())
-      case West  => List(Clockwise())
+      case East  => List(Anticlockwise)
+      case South => List(Anticlockwise, Anticlockwise)
+      case West  => List(Clockwise)
     }
 
   private def turnToFaceEast(currentDirection: Direction): List[Move] =
     currentDirection match {
-      case North => List(Clockwise())
+      case North => List(Clockwise)
       case East  => List.empty
-      case South => List(Anticlockwise())
-      case West  => List(Clockwise(), Clockwise())
+      case South => List(Anticlockwise)
+      case West  => List(Clockwise, Clockwise)
     }
 
   @tailrec
@@ -34,11 +34,11 @@ class CoordinateTranslator {
     initial match {
       case arrived if xMatch && yMatch => RunningListOfMoves(North, List.empty)
       case moveUpAndOver if !xMatch && !yMatch =>
-        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward(), Clockwise(), Forward()))
+        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward, Clockwise, Forward))
       case moveUp if xMatch && !yMatch =>
-        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward()))
+        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward))
       case moveOver if !xMatch && yMatch =>
-        RunningListOfMoves(East, runningListOfMoves.moves ++ turnToFaceEast(runningListOfMoves.direction) ++ List(Forward()))
+        RunningListOfMoves(East, runningListOfMoves.moves ++ turnToFaceEast(runningListOfMoves.direction) ++ List(Forward))
       case _ => RunningListOfMoves(North, List.empty)
 
     }
