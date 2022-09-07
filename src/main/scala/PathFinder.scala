@@ -1,6 +1,7 @@
 object PathFinder {
-  def path(grid: Grid, destination: Coordinates, startingPosition: Position): List[Move] =
-    //I didn't have time to implement the autopilot portion of the exercise, although it seems like Dijkstra or A* algorithms would be the best option for this.
-    //Here I just include an arbitrary list of moves for the sake of getting the program to run
-    List(Forward(), Clockwise(), Forward(), Anticlockwise())
+  def shortestPath(): List[Coordinates] =
+  //Here I just include an arbitrary list of cordinates to get the program to run
+  //A real implementation of finding the shortest path might be achieved using Dijkstra or A* algorithm
+    List(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2), Coordinates(2, 3), Coordinates(3, 3))
+
 }
