@@ -6,8 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "mars_rover"
   )
-libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats-effect" % "3.3.14" withSources () withJavadoc (),
-  "org.scalameta" %% "munit"       % "0.7.29" % Test,
-  "com.beachape" %% "enumeratum" % "1.7.0"
-)
+
+libraryDependencies += "org.scalameta" %% "munit"       % "0.7.29" % Test
+libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.14" withSources () withJavadoc ()
+libraryDependencies += "org.typelevel" %% "munit-cats-effect-3" % "1.0.6" % Test
