@@ -1,9 +1,7 @@
 import scala.annotation.tailrec
 
 case class RunningListOfMoves(direction: Direction, moves: List[Move])
-
 class CoordinateTranslator {
-
   private def turnToFaceNorth(currentDirection: Direction): List[Move] =
     currentDirection match {
       case North => List.empty
@@ -11,7 +9,6 @@ class CoordinateTranslator {
       case South => List(Anticlockwise, Anticlockwise)
       case West  => List(Clockwise)
     }
-
   private def turnToFaceEast(currentDirection: Direction): List[Move] =
     currentDirection match {
       case North => List(Clockwise)
