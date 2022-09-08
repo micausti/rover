@@ -1,14 +1,13 @@
-import cats.effect.IO
-import munit.CatsEffectSuite
+import munit.FunSuite
 
-class CoordinateTranslatorTest extends CatsEffectSuite {
+class CoordinateTranslatorTest extends FunSuite {
 
-  val translator                      = new CoordinateTranslator
-  val initial: IO[RunningListOfMoves] = IO(RunningListOfMoves(North, List.empty))
+  val translator                  = new CoordinateTranslator
+  val initial: RunningListOfMoves = RunningListOfMoves(North, List.empty)
 
   def coordinateTranslatorTest(name: String, original: List[Coordinates], expected: List[Move])(implicit loc: munit.Location): Unit =
     test(name) {
-      assertIO(translator.coordinatesToMoves(original, initial).map(_.moves), expected)
+      assertEquals(translator.coordinatesToMoves(original, initial).moves, expected)
     }
 
   coordinateTranslatorTest("Already at destination", List(Coordinates(0, 0)), List.empty)

@@ -18,7 +18,7 @@ object MarsRover extends IOApp.Simple {
       _           <- IO.println("Calculating moves to destination")
       translator  = new CoordinateTranslator
       coordinates = PathFinder.shortestPath(grid, start, destination)
-      moves       <- translator.coordinatesToMoves(coordinates, IO(RunningListOfMoves(North, List.empty)))
+      moves       = translator.coordinatesToMoves(coordinates, RunningListOfMoves(North, List.empty))
       output      = Printer.createPrintOutput(moves)
       _           = println(output)
     } yield ()
