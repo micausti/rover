@@ -21,3 +21,21 @@ object Coordinates {
       case h if currentValue > gridMax                           => currentValue - gridMax
     }
 }
+
+sealed trait CoordinateComparison
+
+object CoordinateComparison {
+  case object XYMatch extends CoordinateComparison
+
+  case object IncrementXY extends CoordinateComparison
+
+  case object IncrementX extends CoordinateComparison
+
+  case object IncrementY extends CoordinateComparison
+
+  case object DecrementXY extends CoordinateComparison
+
+  case object DecrementX extends CoordinateComparison
+
+  case object DecrementY extends CoordinateComparison
+}

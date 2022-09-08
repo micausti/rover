@@ -12,7 +12,7 @@ object MarsRover extends IOApp.Simple {
 
   val grid: Grid               = Grid(100, 100)
   val start: Coordinates       = Coordinates(0, 0)
-  val destination: Coordinates = Coordinates(50, 50)
+  val destination: Coordinates = Coordinates(3, 3)
   def run: IO[Unit] =
     for {
       _           <- IO.println("Calculating moves to destination")
