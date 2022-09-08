@@ -30,4 +30,9 @@ class CoordinateTranslatorTest extends CatsEffectSuite {
     List(Clockwise, Forward, Anticlockwise, Forward, Clockwise, Forward, Forward, Forward)
   )
 
+  coordinateTranslatorTest(
+    "moving from higher to lower coordinates",
+    List(Coordinates(2, 2), Coordinates(2, 1), Coordinates(1, 1), Coordinates(1, 0), Coordinates(0, 0)),
+    List(Clockwise, Clockwise, Forward, Clockwise, Forward, Anticlockwise, Forward, Clockwise, Forward)
+  )
 }

@@ -1,4 +1,5 @@
 import cats.effect.{IO, IOApp}
+import cats.implicits.toTraverseOps
 
 object MarsRover extends IOApp.Simple {
 
@@ -15,12 +16,12 @@ object MarsRover extends IOApp.Simple {
   val destination: Coordinates = Coordinates(3, 3)
   def run: IO[Unit] =
     for {
-      _           <- IO.println("Calculating moves to destination")
-      translator  = new CoordinateTranslator
-      coordinates = PathFinder.shortestPath(grid, start, destination)
-      moves       <- translator.coordinatesToMoves(coordinates, IO(RunningListOfMoves(North, List.empty)))
-      output      = Printer.createPrintOutput(moves)
-      _           = println(output)
+      _              <- IO.println("Calculating moves to destination")
+      translator     = new CoordinateTranslator
+      allCoordinates = PathFinder.shortestPath(grid, start, destination)
+      allMoves       <- allCoordinates.traverse(ls => translator.coordinatesToMoves(ls, IO(RunningListOfMoves(North, List.empty))).map(_.moves))
+      moves          = Printer.createPrintOutput(allMoves.flatten)
+      _              = println(moves)
     } yield ()
 
 }

@@ -5,14 +5,21 @@ import scala.annotation.tailrec
 case class RunningListOfMoves(direction: Direction, moves: List[Move])
 class CoordinateTranslator {
 
-  private def turnToFace(destination: Direction, currentDirection: Direction) = {
+  @tailrec
+  final def coordinatesToMoves(coordinates: List[Coordinates], moves: IO[RunningListOfMoves]): IO[RunningListOfMoves] =
+    coordinates match {
+      case Nil => moves
+      case x :: Nil => moves
+      case x :: xs => coordinatesToMoves(xs, compare(x, xs.head, moves))
+    }
+
+  private def turnToFace(destination: Direction, currentDirection: Direction) =
     destination match {
       case North => turnToFaceNorth(currentDirection)
-      case East => turnToFaceEast(currentDirection)
+      case East  => turnToFaceEast(currentDirection)
       case South => turnToFaceSouth(currentDirection)
-      case West => turnToFaceWest(currentDirection)
+      case West  => turnToFaceWest(currentDirection)
     }
-  }
   private def turnToFaceNorth(currentDirection: Direction): List[Move] =
     currentDirection match {
       case North => List.empty
@@ -45,19 +52,7 @@ class CoordinateTranslator {
       case West  => List.empty
     }
 
-  @tailrec
-  final def coordinatesToMoves(coordinates: List[Coordinates], moves: IO[RunningListOfMoves]): IO[RunningListOfMoves] =
-    coordinates match {
-      case Nil      => moves
-      case x :: Nil => moves
-      case x :: xs  => coordinatesToMoves(xs, compare(x, xs.head, moves))
-    }
-
-  trait Error
-
-  case class ComparisonError(message: String) extends Error
-
-  def compareValues(initial: Coordinates, destination: Coordinates): IO[CoordinateComparison] =
+  private def compareValues(initial: Coordinates, destination: Coordinates): IO[CoordinateComparison] =
     initial match {
       case xAndYMatch if initial.x == destination.x && initial.y == destination.y             => IO(XYMatch)
       case incrementXAndY if initial.x + 1 == destination.x && initial.y + 1 == destination.y => IO(IncrementXY)
@@ -69,13 +64,12 @@ class CoordinateTranslator {
       case _                                                                                  => IO.raiseError(new Throwable("Coordinates should not be more than one move apart"))
     }
 
-
-  def compare(initial: Coordinates, destination: Coordinates, runningListOfMoves: IO[RunningListOfMoves]): IO[RunningListOfMoves] = {
+  private def compare(initial: Coordinates, destination: Coordinates, runningListOfMoves: IO[RunningListOfMoves]): IO[RunningListOfMoves] =
     for {
-      listOfMoves <- runningListOfMoves
-      initialMoves = listOfMoves.moves
+      listOfMoves      <- runningListOfMoves
+      initialMoves     = listOfMoves.moves
       currentDirection = listOfMoves.direction
-      compare <- compareValues(initial, destination)
+      compare          <- compareValues(initial, destination)
       result = compare match {
         case XYMatch => RunningListOfMoves(North, List.empty)
         case IncrementXY =>
@@ -92,5 +86,4 @@ class CoordinateTranslator {
           RunningListOfMoves(West, initialMoves ++ turnToFace(West, currentDirection) ++ List(Forward))
       }
     } yield result
-}
 }

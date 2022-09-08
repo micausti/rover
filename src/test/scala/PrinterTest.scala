@@ -11,12 +11,12 @@ class PrinterTest extends FunSuite {
 
   printerCheck(
     "createPrintOutput should take a list of moves and convert it to a string",
-    Printer.createPrintOutput(RunningListOfMoves(North, moves)),
+    Printer.createPrintOutput(moves),
     expectedResult
   )
   printerCheck(
     "tells you you've arrives already if there are no moves",
-    Printer.createPrintOutput(RunningListOfMoves(North, List.empty)),
+    Printer.createPrintOutput(List.empty),
     "Already at destination"
   )
 

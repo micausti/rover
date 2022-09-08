@@ -1,7 +1,7 @@
 object Printer {
-  def createPrintOutput(listOfMoves: RunningListOfMoves): String =
-    if (listOfMoves.moves.isEmpty) {
+  def createPrintOutput(listOfMoves: List[Move]): String =
+    if (listOfMoves.isEmpty) {
       "Already at destination"
-    } else listOfMoves.moves.map(_.toString).mkString(" ")
+    } else listOfMoves.map(_.toString).mkString(" ")
 
 }
