@@ -1,10 +1,18 @@
 import CoordinateComparison._
-import enumeratum._
-
+import cats.effect.IO
 import scala.annotation.tailrec
 
 case class RunningListOfMoves(direction: Direction, moves: List[Move])
 class CoordinateTranslator {
+
+  private def turnToFace(destination: Direction, currentDirection: Direction) = {
+    destination match {
+      case North => turnToFaceNorth(currentDirection)
+      case East => turnToFaceEast(currentDirection)
+      case South => turnToFaceSouth(currentDirection)
+      case West => turnToFaceWest(currentDirection)
+    }
+  }
   private def turnToFaceNorth(currentDirection: Direction): List[Move] =
     currentDirection match {
       case North => List.empty
@@ -38,7 +46,7 @@ class CoordinateTranslator {
     }
 
   @tailrec
-  final def coordinatesToMoves(coordinates: List[Coordinates], moves: RunningListOfMoves): RunningListOfMoves =
+  final def coordinatesToMoves(coordinates: List[Coordinates], moves: IO[RunningListOfMoves]): IO[RunningListOfMoves] =
     coordinates match {
       case Nil      => moves
       case x :: Nil => moves
@@ -49,31 +57,40 @@ class CoordinateTranslator {
 
   case class ComparisonError(message: String) extends Error
 
-  def compareValues(initial: Coordinates, destination: Coordinates): CoordinateComparison =
+  def compareValues(initial: Coordinates, destination: Coordinates): IO[CoordinateComparison] =
     initial match {
-      case xAndYMatch if initial.x == destination.x && initial.y == destination.y             => XYMatch
-      case incrementXAndY if initial.x + 1 == destination.x && initial.y + 1 == destination.y => IncrementXY
-      case incrementX if initial.x + 1 == destination.x && initial.y == destination.y         => IncrementX
-      case incrementY if initial.x == destination.x && initial.y + 1 == destination.y         => IncrementY
-      case decrementXAndY if initial.x - 1 == destination.x && initial.y - 1 == destination.y => DecrementXY
-      case decrementX if initial.x - 1 == destination.x && initial.y == destination.y         => DecrementX
-      case decrementY if initial.x == destination.x && initial.y - 1 == destination.y         => DecrementY
+      case xAndYMatch if initial.x == destination.x && initial.y == destination.y             => IO(XYMatch)
+      case incrementXAndY if initial.x + 1 == destination.x && initial.y + 1 == destination.y => IO(IncrementXY)
+      case incrementX if initial.x + 1 == destination.x && initial.y == destination.y         => IO(IncrementX)
+      case incrementY if initial.x == destination.x && initial.y + 1 == destination.y         => IO(IncrementY)
+      case decrementXAndY if initial.x - 1 == destination.x && initial.y - 1 == destination.y => IO(DecrementXY)
+      case decrementX if initial.x - 1 == destination.x && initial.y == destination.y         => IO(DecrementX)
+      case decrementY if initial.x == destination.x && initial.y - 1 == destination.y         => IO(DecrementY)
+      case _                                                                                  => IO.raiseError(new Throwable("Coordinates should not be more than one move apart"))
     }
 
-  def compare(initial: Coordinates, destination: Coordinates, runningListOfMoves: RunningListOfMoves): RunningListOfMoves =
-    compareValues(initial, destination) match {
-      case XYMatch => RunningListOfMoves(North, List.empty)
-      case IncrementXY =>
-        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward, Clockwise, Forward))
-      case IncrementY =>
-        RunningListOfMoves(North, runningListOfMoves.moves ++ turnToFaceNorth(runningListOfMoves.direction) ++ List(Forward))
-      case IncrementX =>
-        RunningListOfMoves(East, runningListOfMoves.moves ++ turnToFaceEast(runningListOfMoves.direction) ++ List(Forward))
-      case DecrementXY =>
-        RunningListOfMoves(South, runningListOfMoves.moves ++ turnToFaceSouth(runningListOfMoves.direction) ++ List(Forward, Clockwise, Forward))
-      case DecrementY =>
-        RunningListOfMoves(South, runningListOfMoves.moves ++ turnToFaceSouth(runningListOfMoves.direction) ++ List(Forward))
-      case DecrementX =>
-        RunningListOfMoves(West, runningListOfMoves.moves ++ turnToFaceWest(runningListOfMoves.direction) ++ List(Forward))
-    }
+
+  def compare(initial: Coordinates, destination: Coordinates, runningListOfMoves: IO[RunningListOfMoves]): IO[RunningListOfMoves] = {
+    for {
+      listOfMoves <- runningListOfMoves
+      initialMoves = listOfMoves.moves
+      currentDirection = listOfMoves.direction
+      compare <- compareValues(initial, destination)
+      result = compare match {
+        case XYMatch => RunningListOfMoves(North, List.empty)
+        case IncrementXY =>
+          RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward, Clockwise, Forward))
+        case IncrementY =>
+          RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward))
+        case IncrementX =>
+          RunningListOfMoves(East, initialMoves ++ turnToFace(East, currentDirection) ++ List(Forward))
+        case DecrementXY =>
+          RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward, Clockwise, Forward))
+        case DecrementY =>
+          RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward))
+        case DecrementX =>
+          RunningListOfMoves(West, initialMoves ++ turnToFace(West, currentDirection) ++ List(Forward))
+      }
+    } yield result
+}
 }
