@@ -8,48 +8,20 @@ class CoordinateTranslator {
   @tailrec
   final def coordinatesToMoves(coordinates: List[Coordinates], moves: IO[RunningListOfMoves]): IO[RunningListOfMoves] =
     coordinates match {
-      case Nil => moves
+      case Nil      => moves
       case x :: Nil => moves
-      case x :: xs => coordinatesToMoves(xs, compare(x, xs.head, moves))
+      case x :: xs  => coordinatesToMoves(xs, compare(x, xs.head, moves))
     }
 
-  private def turnToFace(destination: Direction, currentDirection: Direction) =
-    destination match {
-      case North => turnToFaceNorth(currentDirection)
-      case East  => turnToFaceEast(currentDirection)
-      case South => turnToFaceSouth(currentDirection)
-      case West  => turnToFaceWest(currentDirection)
-    }
-  private def turnToFaceNorth(currentDirection: Direction): List[Move] =
-    currentDirection match {
-      case North => List.empty
-      case East  => List(Anticlockwise)
-      case South => List(Anticlockwise, Anticlockwise)
-      case West  => List(Clockwise)
-    }
-
-  private def turnToFaceEast(currentDirection: Direction): List[Move] =
-    currentDirection match {
-      case North => List(Clockwise)
-      case East  => List.empty
-      case South => List(Anticlockwise)
-      case West  => List(Clockwise, Clockwise)
-    }
-
-  private def turnToFaceSouth(currentDirection: Direction): List[Move] =
-    currentDirection match {
-      case North => List(Clockwise, Clockwise)
-      case East  => List(Clockwise)
-      case South => List.empty
-      case West  => List(Anticlockwise)
-    }
-
-  private def turnToFaceWest(currentDirection: Direction): List[Move] =
-    currentDirection match {
-      case North => List(Anticlockwise)
-      case East  => List(Clockwise, Clockwise)
-      case South => List(Clockwise)
-      case West  => List.empty
+  private def turn(currentDirection: Direction, destination: Direction): IO[List[Move]] =
+    (destination, currentDirection) match {
+      case same if (destination == currentDirection)                     => IO(List.empty)
+      case (North, East) | (East, South) | (South, West) | (West, North) => IO(List(Anticlockwise))
+      case (North, South)                                                => IO(List(Anticlockwise, Anticlockwise))
+      case (North, West) | (East, North) | (South, East) | (West, South) => IO(List(Clockwise))
+      case (East, West)                                                  => IO(List(Clockwise, Anticlockwise))
+      case (South, North) | (West, East)                                 => IO(List(Clockwise, Clockwise))
+      case _                                                             => IO.raiseError(new Throwable("Invalid move state"))
     }
 
   private def compareValues(initial: Coordinates, destination: Coordinates): IO[CoordinateComparison] =
@@ -66,24 +38,11 @@ class CoordinateTranslator {
 
   private def compare(initial: Coordinates, destination: Coordinates, runningListOfMoves: IO[RunningListOfMoves]): IO[RunningListOfMoves] =
     for {
-      listOfMoves      <- runningListOfMoves
-      initialMoves     = listOfMoves.moves
-      currentDirection = listOfMoves.direction
-      compare          <- compareValues(initial, destination)
-      result = compare match {
-        case XYMatch => RunningListOfMoves(North, List.empty)
-        case IncrementXY =>
-          RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward, Clockwise, Forward))
-        case IncrementY =>
-          RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward))
-        case IncrementX =>
-          RunningListOfMoves(East, initialMoves ++ turnToFace(East, currentDirection) ++ List(Forward))
-        case DecrementXY =>
-          RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward, Clockwise, Forward))
-        case DecrementY =>
-          RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward))
-        case DecrementX =>
-          RunningListOfMoves(West, initialMoves ++ turnToFace(West, currentDirection) ++ List(Forward))
-      }
-    } yield result
+      listOfMoves          <- runningListOfMoves
+      initialMoves         = listOfMoves.moves
+      currentDirection     = listOfMoves.direction
+      compare              <- compareValues(initial, destination)
+      destinationDirection = compare.destinationDirection
+      turnMoves            <- turn(currentDirection, destinationDirection)
+    } yield RunningListOfMoves(destinationDirection, initialMoves ++ turnMoves ++ compare.movesAfterDirectionChange)
 }

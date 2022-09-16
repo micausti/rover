@@ -22,14 +22,38 @@ object Coordinates {
     }
 }
 
-sealed trait CoordinateComparison
+sealed trait CoordinateComparison {
+  val destinationDirection: Direction
+  val movesAfterDirectionChange: List[Move]
+}
 
 object CoordinateComparison {
-  case object XYMatch extends CoordinateComparison
-  case object IncrementXY extends CoordinateComparison
-  case object IncrementX extends CoordinateComparison
-  case object IncrementY extends CoordinateComparison
-  case object DecrementXY extends CoordinateComparison
-  case object DecrementX extends CoordinateComparison
-  case object DecrementY extends CoordinateComparison
+  case object XYMatch extends CoordinateComparison {
+    override val destinationDirection: Direction       = North
+    override val movesAfterDirectionChange: List[Move] = List.empty
+  }
+  case object IncrementXY extends CoordinateComparison {
+    override val destinationDirection: Direction       = North
+    override val movesAfterDirectionChange: List[Move] = List(Forward, Clockwise, Forward)
+  }
+  case object IncrementX extends CoordinateComparison {
+    override val destinationDirection: Direction       = East
+    override val movesAfterDirectionChange: List[Move] = List(Forward)
+  }
+  case object IncrementY extends CoordinateComparison {
+    override val destinationDirection: Direction       = North
+    override val movesAfterDirectionChange: List[Move] = List(Forward)
+  }
+  case object DecrementXY extends CoordinateComparison {
+    override val destinationDirection: Direction       = South
+    override val movesAfterDirectionChange: List[Move] = List(Forward, Clockwise, Forward)
+  }
+  case object DecrementX extends CoordinateComparison {
+    override val destinationDirection: Direction       = West
+    override val movesAfterDirectionChange: List[Move] = List(Forward)
+  }
+  case object DecrementY extends CoordinateComparison {
+    override val destinationDirection: Direction       = South
+    override val movesAfterDirectionChange: List[Move] = List(Forward)
+  }
 }
