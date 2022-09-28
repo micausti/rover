@@ -1,5 +1,5 @@
 object PathFinder {
-  def shortestPath(grid: Grid, start: Coordinates, destination: Coordinates): List[List[Coordinates]] =
+  def shortestPath(grid: Grid, start: Coordinates, destination: Coordinates): List[List[Coordinates]] = {
     /*Here I just include an arbitrary list of coordinates to get the program to run
     A real implementation of finding the shortest path might be achieved using Dijkstra or A* algorithm
 
@@ -11,4 +11,49 @@ object PathFinder {
      */
     List(List(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2), Coordinates(2, 3), Coordinates(3, 3)))
 
-}
+    val xSide = (destination.x - start.x).toDouble
+    val ySide = (destination.y - start.y).toDouble
+    math.hypot(xSide, ySide)
+
+    //5 x 5
+    //starting point 0,0, North
+    //ending point 5,5, North
+
+    //starting.x == ending.x && starting.y == ending.y - end condition
+    def findPath(start: Coordinates, end: Coordinates, initialList: List[Coordinates]): List[Coordinates] = {
+      val compare: Boolean =  start.x == end.x && start.y == end.y
+      compare match {
+        case true => initialList
+        case false =>
+          val newX = incrementX(start, end)
+          findPath(newX, end, initialList ++ List(newX))
+        }
+      }
+
+
+    //figure out which direction to go
+        //is starting.x < ending.x  = need to face East
+        //is starting.x > ending.x = need to face West
+        //is starting.y < ending.y = North
+        //is starting.y > ending.y = South
+
+    def incrementX(start: Coordinates, end: Coordinates): Coordinates = {
+      start match {
+        case _ if start.x < end.x => Coordinates(start.x+1, start.y)
+        case _ if start.x > end.x => Coordinates(start.x - 1, start.y)
+      }
+
+      def incrementY(start: Coordinates, end: Coordinates): Coordinates = {
+        start match {
+          case _ if start.y < end.y => Coordinates(start.x, start.y + 1)
+          case _ if start.y > end.y => Coordinates(start.x, start.y - 1)
+        }
+    }
+
+    //is there at least one x move to make
+       //starting.x  + 1 =< ending.x
+       //make the move
+
+    //make one x move
+  }
+

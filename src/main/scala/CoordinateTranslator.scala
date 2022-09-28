@@ -72,14 +72,14 @@ class CoordinateTranslator {
       compare          <- compareValues(initial, destination)
       result = compare match {
         case XYMatch => RunningListOfMoves(North, List.empty)
-        case IncrementXY =>
-          RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward, Clockwise, Forward))
+//        case IncrementXY =>
+//          RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward, Clockwise, Forward))
         case IncrementY =>
           RunningListOfMoves(North, initialMoves ++ turnToFace(North, currentDirection) ++ List(Forward))
         case IncrementX =>
           RunningListOfMoves(East, initialMoves ++ turnToFace(East, currentDirection) ++ List(Forward))
-        case DecrementXY =>
-          RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward, Clockwise, Forward))
+//        case DecrementXY =>
+//          RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward, Clockwise, Forward))
         case DecrementY =>
           RunningListOfMoves(South, initialMoves ++ turnToFace(South, currentDirection) ++ List(Forward))
         case DecrementX =>
